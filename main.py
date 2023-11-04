@@ -9,6 +9,7 @@ WIDTH = 400
 HEIGHT = 700
 DIMENSIONS = (WIDTH, HEIGHT)
 DISTANCE_BETWEEN_OBJECTS = 160
+DISTANCE_BETWEEN_PAIR_OBJECTS = 200
 
 # Init pygame
 pygame.init()
@@ -20,7 +21,7 @@ ss = spritesheet.SpriteSheet("assets/sprits/sprits.png")
 
 # Load sprites from bird
 bird_sprites = [
-    ss.image_at((3, 491, 17, 12), (0,0,0)),
+    ss.image_at((3, 491, 17, 12)),
     ss.image_at((31, 491, 17, 12)),
     ss.image_at((59, 491, 17, 12))
 ]
@@ -45,10 +46,11 @@ ground_surf = pygame.transform.scale(ss.image_at((292, 0, 67, 56)), (WIDTH + 150
 ground_rect = ground_surf.get_rect(bottomleft=(0, HEIGHT))
 
 # Gravity
-gravity = 0;
+gravity = 0
 
 # Velocity of objects
-velocity = 2;
+velocity = 2
+
 
 # Generate distance between the obstacles
 def generate_positions_of_objects():
@@ -56,19 +58,42 @@ def generate_positions_of_objects():
     top_position = bottom_position - DISTANCE_BETWEEN_OBJECTS
     return [bottom_position, top_position]
 
+
 positions = generate_positions_of_objects()
-print(positions)
 
 # Obstacles
 # Bottom
 bottom_obstacle_surf = pygame.transform.scale_by(ss.image_at((84, 323, 26, 160)), 3.5)
-bottom_obstacle_surf.set_colorkey((0,0,0))
+bottom_obstacle_surf.set_colorkey((0, 0, 0))
 bottom_obstacle_rect = bottom_obstacle_surf.get_rect(topleft=(WIDTH, positions[0]))
 
 # Top
 top_obstacle_surf = pygame.transform.scale_by(ss.image_at((56, 323, 26, 160)), 3.5)
-top_obstacle_surf.set_colorkey((0,0,0))
+top_obstacle_surf.set_colorkey((0, 0, 0))
 top_obstacle_rect = top_obstacle_surf.get_rect(bottomleft=(WIDTH, positions[1]))
+
+# Generating a pair of obstacles automatically
+obstacle_list = [[bottom_obstacle_rect, top_obstacle_rect]]
+
+generate_pair_obstacle = pygame.USEREVENT + 1
+pygame.time.set_timer(generate_pair_obstacle, 2000)
+
+
+def move_obstacles(list_of_obstacles):
+    if list_of_obstacles:
+        for obstacle in list_of_obstacles:
+            obstacle[0].x -= velocity
+            obstacle[1].x -= velocity
+
+            screen.blit(bottom_obstacle_surf, obstacle[0])
+            screen.blit(top_obstacle_surf, obstacle[1])
+
+        list_of_obstacles = [obstacle for obstacle in list_of_obstacles if obstacle[0].x > -100]
+
+        return list_of_obstacles
+
+    return []
+
 
 running = True
 while running:
@@ -77,26 +102,26 @@ while running:
             pygame.quit()
             running = False
             sys.exit()
-        
+
         # Animation of bird
         if event.type == animation_bird:
             index += 1
             bird_surf = bird_sprites[index % len(bird_sprites)]
-        
+
         # Bird jump
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 gravity = -13
 
+        if event.type == generate_pair_obstacle:
+            positions = generate_positions_of_objects()
+            bottom_obstacle_rect = bottom_obstacle_surf.get_rect(topleft=(WIDTH, positions[0]))
+            top_obstacle_rect = top_obstacle_surf.get_rect(bottomleft=(WIDTH, positions[1]))
+            obstacle_list.append([bottom_obstacle_rect, top_obstacle_rect])
 
-    screen.blit(background_image,background_image.get_rect(topleft=(0,0)))
-    screen.blit(bottom_obstacle_surf, bottom_obstacle_rect)
-    screen.blit(top_obstacle_surf, top_obstacle_rect)
+    screen.blit(background_image, background_image.get_rect(topleft=(0, 0)))
+    obstacle_list = move_obstacles(obstacle_list)
     screen.blit(ground_surf, ground_rect)
-    
-    # Obstacles move
-    bottom_obstacle_rect.x -= velocity
-    top_obstacle_rect.x -= velocity
 
     # Ground animation
     ground_rect.x -= 1
@@ -105,17 +130,17 @@ while running:
 
     # Bird gravity
     gravity += 1
-    
+
     bird_rect.bottom += gravity
 
-    if bird_rect.collidelist([top_obstacle_rect, bottom_obstacle_rect]) == 1:
+    if bird_rect.collidelist(obstacle_list[0]) != -1 or (len(obstacle_list) >= 2
+                                                        and bird_rect.collidelist(obstacle_list[1]) != -1):
         print("Fail")
 
     if bird_rect.bottom >= ground_rect.top:
         bird_rect.bottom = ground_rect.top
-    
+
     screen.blit(bird_surf, bird_rect)
     pygame.display.update()
 
     clock.tick(FPS)
-
