@@ -14,7 +14,8 @@ class FlappyBird:
                  ground_image,
                  bird_sprites,
                  try_again_image,
-                 how_to_play_image):
+                 how_to_play_image,
+                 pause_image):
         self.app = app
         self.score = 0
         self.scoreElement = Score()
@@ -31,12 +32,18 @@ class FlappyBird:
         self.bird.add(Bird(self, int(self.app.dimensions[0] / 2), int(self.app.dimensions[1]) / 2, bird_sprites))
         self.generate_first_objects()
         self.try_again = TryAgain(try_again_image, self.restart)
+        self.menu_button = PauseButton(pause_image, self.click_menu_button)
+
+    def click_menu_button(self):
+        self.app.state = 0
+        self.restart()
 
     def add_obstacles(self):
         if len(self.obstacles.sprites()) <= 4:
             bottom, top = Obstacle.generate_positions_of_objects()
 
-            distance = self.obstacles.sprites()[len(self.obstacles.sprites()) - 1].rect.x + Obstacle.distance_between_pair
+            distance = (self.obstacles.sprites()[len(self.obstacles.sprites()) - 1].rect.x +
+                        Obstacle.distance_between_pair)
 
             bottom_obstacle = Obstacle(self.obstacle_images[0], topleft=(distance, bottom))
             top_obstacle = Obstacle(self.obstacle_images[1], bottomleft=(distance, top))
@@ -51,7 +58,8 @@ class FlappyBird:
         self.obstacles.add(bottom_obstacle, top_obstacle)
 
     def is_game_over_checker(self):
-        self.is_game_over = bool(len(pygame.sprite.spritecollide(self.bird.sprite, self.obstacles, False)) >= 1 or pygame.sprite.spritecollideany(self.bird.sprite, self.ground))
+        self.is_game_over = bool(len(pygame.sprite.spritecollide(self.bird.sprite, self.obstacles, False)) >= 1 or
+                                 pygame.sprite.spritecollideany(self.bird.sprite, self.ground))
         self.is_active = not self.is_game_over and self.is_active
 
     def handle_score(self):
@@ -98,9 +106,12 @@ class FlappyBird:
             self.move_objects()
             self.ground.update()
         self.obstacles.draw(self.app.screen)
+        self.menu_button.draw(self.app.screen)
 
     def controls(self):
         keys = pygame.mouse.get_pressed()
+        if keys[0] and self.menu_button.rect.collidepoint(pygame.mouse.get_pos()):
+            return
         if keys[0] and not self.is_game_over and not self.bird.sprite.is_jumping and not self.try_again.is_active:
             self.active_game()
 
@@ -119,7 +130,8 @@ class FlappyBird:
         if not self.is_game_over:
             self.try_again.disable()
             if not self.is_active:
-                self.app.screen.blit(self.how_to_play, self.how_to_play.get_rect(center=(int(WIDTH / 2), int(HEIGHT / 2) + 100)))
+                self.app.screen.blit(self.how_to_play, self.how_to_play.get_rect(center=(int(WIDTH / 2),
+                                                                                         int(HEIGHT / 2) + 100)))
             self.is_game_over_checker()
         else:
             self.game_over()
@@ -167,6 +179,7 @@ class TryAgain:
             self.rect.y -= 5
         self.click()
 
+
 class Ground(pygame.sprite.Sprite):
     def __init__(self, image):
         super().__init__()
@@ -180,3 +193,22 @@ class Ground(pygame.sprite.Sprite):
 
     def update(self):
         self.apply_velocity()
+
+
+class PauseButton:
+    def __init__(self, pause_image, fn):
+        self.image = pause_image
+        self.rect = pause_image.get_rect(topleft=(20, 20))
+        self.fn = fn
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+        self.click()
+
+    def click(self):
+        pressed = pygame.mouse.get_pressed()[0]
+        position = pygame.mouse.get_pos()
+
+        if pressed and self.rect.collidepoint(position):
+            self.fn()
+            pygame.time.delay(20)

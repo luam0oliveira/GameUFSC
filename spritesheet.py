@@ -28,7 +28,7 @@ class SpriteSheet(object):
             image.set_colorkey(color_key, pygame.RLEACCEL)
         return image
 
-    # Load a whole bunch of images and return them as a list
+    # Load a lot of images and return them as a list
     def images_at(self, rects, color_key=None):
         "Loads multiple images, supply a list of coordinates"
         return [self.image_at(rect, color_key) for rect in rects]

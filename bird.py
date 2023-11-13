@@ -1,9 +1,10 @@
 import pygame
 
+
 class Bird(pygame.sprite.Sprite):
     def __init__(self, flappy, x, y, sprites):
         super().__init__()
-        self.initial_position = (x,y)
+        self.initial_position = (x, y)
         self.flappy = flappy
         self.sprites = sprites
         self.num_sprites = len(sprites)
@@ -72,4 +73,3 @@ class Bird(pygame.sprite.Sprite):
         if self.is_active:
             self.animation()
             self.apply_gravity()
-

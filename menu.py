@@ -7,7 +7,8 @@ class Menu:
         self.background = background_image
         self.logo = logo_image
         self.play_button_surf = play_button_image
-        self.play_button_rect = self.play_button_surf.get_rect(center=(int(self.app.dimensions[0] / 2), int(self.app.dimensions[1] / 2 + 100)))
+        self.play_button_rect = self.play_button_surf.get_rect(center=(int(self.app.dimensions[0] / 2),
+                                                                       int(self.app.dimensions[1] / 2 + 100)))
 
     def draw(self):
         self.app.screen.blit(self.background, self.background.get_rect(topleft=(0, 0)))

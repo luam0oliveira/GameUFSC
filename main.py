@@ -1,25 +1,9 @@
 from app import App
 
-
-# ss = spritesheet.SpriteSheet("assets/sprits/sprits.png")
-
-
-
-
-
-
-
-
-
-
-
-
 app = App()
 app.run()
 
 # fb = FlappyBird(0, obstacle_images, background_image, ground_surf, bird_sprites)
-
-
 
 # # Init pygame
 # pygame.init()

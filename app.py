@@ -5,6 +5,7 @@ from flappybird import FlappyBird
 from settings import DIMENSIONS, WIDTH, HEIGHT, FPS
 from menu import Menu
 
+
 class App:
     def __init__(self):
         pygame.init()
@@ -23,13 +24,13 @@ class App:
                                       self.images["ground_image"],
                                       self.images["bird_sprites"],
                                       self.images["try_again_image"],
-                                      self.images["how_to_play"]
-                                      )
+                                      self.images["how_to_play"],
+                                      self.images["pause_button"])
         self.menu = Menu(self, self.images["background_image"], self.images["logo"], self.images["play"])
 
     def load_images(self):
         # Load SpriteSheet
-        ss = spritesheet.SpriteSheet("assets/sprits/sprits.png")
+        ss = spritesheet.SpriteSheet("assets/sprites/sprites.png")
 
         # Obstacle images
         self.images["obstacle_images"] = [
@@ -54,7 +55,8 @@ class App:
 
         # Load scenario images
         self.images["background_image"] = pygame.transform.scale(ss.image_at((0, 0, 143, 255)), DIMENSIONS)
-        self.images["ground_image"] = pygame.transform.scale(ss.image_at((292, 0, 67, 56)), (self.dimensions[0] + 150, 150))
+        self.images["ground_image"] = pygame.transform.scale(ss.image_at((292, 0, 67, 56)),
+                                                             (self.dimensions[0] + 150, 150))
 
         # Load try again image
         self.images["try_again_image"] = pygame.transform.scale_by(ss.image_at((354, 118, 52, 29)), 2)
@@ -66,6 +68,10 @@ class App:
         # Load play image
         self.images["play"] = pygame.transform.scale_by(ss.image_at((354, 118, 52, 29)), 2.5)
         self.images["play"].set_colorkey("Black")
+
+        # Load pause button image
+        self.images["pause_button"] = pygame.transform.scale_by(ss.image_at((462, 26, 40, 14)), 2.5)
+        self.images["pause_button"].set_colorkey("Black")
 
         # Removing black background
         for image in self.images["obstacle_images"]:
@@ -83,7 +89,6 @@ class App:
                 self.flappy_bird.update()
             case _:
                 print("Hahaha")
-
 
         self.clock.tick(FPS)
 

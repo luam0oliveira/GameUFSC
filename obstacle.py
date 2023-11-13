@@ -38,4 +38,3 @@ class Obstacle(pygame.sprite.Sprite):
         if self.is_active:
             self.destroy()
             self.apply_velocity()
-
