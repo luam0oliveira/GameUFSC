@@ -26,6 +26,10 @@ class Bird(pygame.sprite.Sprite):
         self.die_channel.set_volume(0.2)
         self.hit_sound = pygame.mixer.Sound("./assets/sounds/hit.mp3")
 
+    def set_sprites(self, sprites):
+        self.sprites = sprites
+        self.image = self.sprites[self.index_image]
+
     def jump(self):
         self.gravity = -13
 
@@ -49,7 +53,7 @@ class Bird(pygame.sprite.Sprite):
     def animation(self):
         self.index_image = (self.index_image + 1) % self.num_sprites
         self.angle = -self.gravity
-        self.image = pygame.transform.rotate((self.sprites[self.index_image]), -self.angle)
+        self.image = pygame.transform.rotate((self.sprites[self.index_image]), self.angle)
         self.image.set_colorkey("Black")
 
     def death(self):

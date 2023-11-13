@@ -9,3 +9,20 @@ FONTS = {
     "mono": "./assets/fonts/PixeloidMono.ttf",
     "bold": "./assets/fonts/PixeloidSansBold.ttf"
 }
+
+SPRITES_DIR = "./assets/sprites"
+
+SKINS = {
+    "default": {
+        "name": "Clássica",
+        "path": SPRITES_DIR + "/default.png"
+    },
+    "second": {
+        "name": "Gelo",
+        "path": SPRITES_DIR + "/second.png"
+    },
+    "third": {
+        "name": "Fogo",
+        "path": SPRITES_DIR + "/third.png"
+    }
+}

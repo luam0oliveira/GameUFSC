@@ -1,8 +1,9 @@
 import spritesheet
 import pygame
 import sys
+from spritesheet_skins import get_skins
 from flappybird import FlappyBird
-from settings import DIMENSIONS, WIDTH, HEIGHT, FPS
+from settings import DIMENSIONS, WIDTH, HEIGHT, FPS, SKINS
 from menu import Menu
 
 
@@ -17,7 +18,9 @@ class App:
         self.clock = pygame.time.Clock()
         self.state = 0
         self.images = {}
+        self.skins = {}
         self.is_loading = False
+        self.selected_skin = "default"
         self.load_images()
         self.flappy_bird = FlappyBird(self,
                                       0, self.images["obstacle_images"],
@@ -28,7 +31,28 @@ class App:
                                       self.images["how_to_play"],
                                       self.images["pause_button"])
 
-        self.menu = Menu(self, self.images["background_image"], self.images["logo"], self.images["play"])
+        self.menu = Menu(self,
+                         self.images["background_image"],
+                         self.images["logo"],
+                         self.images["play"],
+                         self.skins,
+                         self.images["next"],
+                         self.images["previous"],
+                         self.change_skin)
+
+    def load_skins(self):
+        data = SKINS
+        for i in data:
+            self.skins[i] = {
+                "name": data[i]["name"],
+                "sprites": get_skins(data[i]["path"], 17, 12, 3)
+            }
+
+    def change_skin(self, selected):
+        self.selected_skin = selected
+        self.flappy_bird.bird.sprite.set_sprites(self.skins[self.selected_skin]["sprites"])
+        print(self.flappy_bird.bird.sprite.sprites)
+
 
     def load_images(self):
         # Load SpriteSheet
@@ -40,20 +64,14 @@ class App:
             pygame.transform.scale_by(ss.image_at((56, 323, 26, 160)), 3.5)
         ]
 
-        # Load sprites from bird
-        self.images["bird_sprites"] = [
-            ss.image_at((3, 491, 17, 12)),
-            ss.image_at((31, 491, 17, 12)),
-            ss.image_at((59, 491, 17, 12))
-        ]
+        # Load skins
+        self.load_skins()
+
+        self.images["bird_sprites"] = self.skins[self.selected_skin]["sprites"]
 
         # Load how to play
         self.images["how_to_play"] = pygame.transform.scale_by(ss.image_at((292, 91, 57, 49)), 2.5)
         self.images["how_to_play"].set_colorkey("Black")
-
-        # Re-scaling images
-        for i in range(len(self.images["bird_sprites"])):
-            self.images["bird_sprites"][i] = pygame.transform.scale_by(self.images["bird_sprites"][i], 2.5)
 
         # Load scenario images
         self.images["background_image"] = pygame.transform.scale(ss.image_at((0, 0, 143, 255)), DIMENSIONS)
@@ -67,6 +85,10 @@ class App:
         self.images["logo"] = pygame.transform.scale_by(ss.image_at((351, 91, 89, 24)), 3)
         self.images["logo"].set_colorkey("Black")
 
+        # Load skin changer button images
+        self.images["next"] = pygame.transform.scale_by(ss.image_at((334, 142, 13, 14)), 2)
+        self.images["previous"] = pygame.transform.flip(self.images["next"], True, False)
+
         # Load play image
         self.images["play"] = pygame.transform.scale_by(ss.image_at((354, 118, 52, 29)), 2.5)
         self.images["play"].set_colorkey("Black")
@@ -77,9 +99,6 @@ class App:
 
         # Removing black background
         for image in self.images["obstacle_images"]:
-            image.set_colorkey("Black")
-
-        for image in self.images["bird_sprites"]:
             image.set_colorkey("Black")
 
     def update(self):

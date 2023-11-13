@@ -2,6 +2,7 @@ import settings
 from bird import Bird
 from obstacle import Obstacle
 from settings import HEIGHT, FONTS, WIDTH
+from font_util import outline
 import pygame
 
 
@@ -30,7 +31,10 @@ class FlappyBird:
         self.is_loading = False
         self.bird = pygame.sprite.GroupSingle()
         self.obstacles = pygame.sprite.Group()
-        self.bird.add(Bird(self, int(self.app.dimensions[0] / 2), int(self.app.dimensions[1]) / 2, bird_sprites))
+        self.bird.add(Bird(self,
+                           int(self.app.dimensions[0] / 2),
+                           int(self.app.dimensions[1]) / 2,
+                           bird_sprites))
         self.generate_first_objects()
         self.try_again = TryAgain(try_again_image, self.restart)
         self.menu_button = MenuButton(pause_image, self.click_menu_button)
@@ -90,7 +94,7 @@ class FlappyBird:
                 return
             self.score += 1
             self.point_channel.play(self.point_sound)
-            self.scoreElement.set_score(self.score)
+        self.scoreElement.set_score(self.score)
         self.scoreElement.draw(self.app.screen)
 
     def game_over(self):
@@ -164,19 +168,8 @@ class Score:
         text = self.font.render(str(self.value), False, "Black")
         rect = text.get_rect(center=(int(WIDTH / 2), 40))
 
-        Score.outline(text, rect, screen)
+        outline(text, rect, screen)
         screen.blit(text, rect)
-
-    @staticmethod
-    def outline(img, loc, display):
-        mask = pygame.mask.from_surface(img)
-        mask_surf = mask.to_surface()
-        line = 3
-        mask_surf.set_colorkey((0, 0, 0))
-        display.blit(mask_surf, (loc[0] - line, loc[1]))
-        display.blit(mask_surf, (loc[0] + line, loc[1]))
-        display.blit(mask_surf, (loc[0], loc[1] - line))
-        display.blit(mask_surf, (loc[0], loc[1] + line))
 
     def set_score(self, score):
         self.value = score
