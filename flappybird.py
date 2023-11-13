@@ -27,16 +27,19 @@ class FlappyBird:
         self.background = background_image
         self.ground = pygame.sprite.GroupSingle()
         self.ground.add(Ground(ground_image))
+        self.is_loading = False
         self.bird = pygame.sprite.GroupSingle()
         self.obstacles = pygame.sprite.Group()
         self.bird.add(Bird(self, int(self.app.dimensions[0] / 2), int(self.app.dimensions[1]) / 2, bird_sprites))
         self.generate_first_objects()
         self.try_again = TryAgain(try_again_image, self.restart)
-        self.menu_button = PauseButton(pause_image, self.click_menu_button)
+        self.menu_button = MenuButton(pause_image, self.click_menu_button)
+        self.point_channel = pygame.mixer.Channel(2)
+        self.point_sound = pygame.mixer.Sound("./assets/sounds/point.mp3")
 
     def click_menu_button(self):
-        self.app.state = 0
         self.restart()
+        self.app.state = 0
 
     def add_obstacles(self):
         if len(self.obstacles.sprites()) <= 4:
@@ -71,12 +74,17 @@ class FlappyBird:
         if len(obstacles) > 6:
             second_obstacle = obstacles[2]
 
+        added = False
         if position >= first_obstacle.rect.x and not first_obstacle.scored:
-            self.score += 1
+            added = True
             first_obstacle.scored = True
         elif second_obstacle and position >= second_obstacle.rect.x and not second_obstacle.scored:
-            self.score += 1
+            added = True
             second_obstacle.scored = True
+
+        if added:
+            self.score += 1
+            self.point_channel.play(self.point_sound)
 
         self.scoreElement.set_score(self.score)
         self.scoreElement.draw(self.app.screen)
@@ -95,6 +103,8 @@ class FlappyBird:
         self.generate_first_objects()
         self.score = 0
         self.try_again.disable()
+        pygame.time.delay(90)
+        self.is_loading = False
 
     def move_objects(self):
         for obstacle in self.obstacles:
@@ -111,8 +121,11 @@ class FlappyBird:
     def controls(self):
         keys = pygame.mouse.get_pressed()
         if keys[0] and self.menu_button.rect.collidepoint(pygame.mouse.get_pos()):
+            self.is_loading = True
             return
-        if keys[0] and not self.is_game_over and not self.bird.sprite.is_jumping and not self.try_again.is_active:
+
+        space = pygame.key.get_pressed()[pygame.K_SPACE]
+        if (keys[0] or space) and not self.is_game_over and not self.bird.sprite.is_jumping and not self.try_again.is_active:
             self.active_game()
 
     def active_game(self):
@@ -141,12 +154,25 @@ class FlappyBird:
 class Score:
     def __init__(self):
         self.value = 0
-        self.font = pygame.font.Font(FONTS["bold"], 30)
+        self.font = pygame.font.Font(FONTS["bold"], 32)
 
     def draw(self, screen):
         text = self.font.render(str(self.value), False, "Black")
-        rect = text.get_rect(center=(int(WIDTH / 2), 100))
+        rect = text.get_rect(center=(int(WIDTH / 2), 40))
+
+        Score.outline(text, rect, screen)
         screen.blit(text, rect)
+
+    @staticmethod
+    def outline(img, loc, display):
+        mask = pygame.mask.from_surface(img)
+        mask_surf = mask.to_surface()
+        line = 3
+        mask_surf.set_colorkey((0, 0, 0))
+        display.blit(mask_surf, (loc[0] - line, loc[1]))
+        display.blit(mask_surf, (loc[0] + line, loc[1]))
+        display.blit(mask_surf, (loc[0], loc[1] - line))
+        display.blit(mask_surf, (loc[0], loc[1] + line))
 
     def set_score(self, score):
         self.value = score
@@ -166,13 +192,13 @@ class TryAgain:
         self.is_active = True
 
     def disable(self):
+        self.rect = self.image.get_rect(center=(int(settings.WIDTH / 2), settings.HEIGHT + 200))
         self.is_active = False
 
     def click(self):
         if pygame.mouse.get_pressed()[0] and self.rect.collidepoint(pygame.mouse.get_pos()):
             self.fn()
-            self.rect = self.image.get_rect(center=(int(settings.WIDTH / 2), settings.HEIGHT + 200))
-            self.is_active = False
+            self.disable()
 
     def update(self):
         if self.rect.y > int(settings.HEIGHT / 2):
@@ -195,7 +221,7 @@ class Ground(pygame.sprite.Sprite):
         self.apply_velocity()
 
 
-class PauseButton:
+class MenuButton:
     def __init__(self, pause_image, fn):
         self.image = pause_image
         self.rect = pause_image.get_rect(topleft=(20, 20))
@@ -211,4 +237,3 @@ class PauseButton:
 
         if pressed and self.rect.collidepoint(position):
             self.fn()
-            pygame.time.delay(20)

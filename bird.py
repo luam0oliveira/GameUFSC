@@ -15,6 +15,13 @@ class Bird(pygame.sprite.Sprite):
         self.is_active = False
         self.gravity = 0
         self.is_jumping = False
+        self.jump_channel = pygame.mixer.Channel(0)
+        self.jump_channel.set_volume(0.1)
+        self.jump_sound = pygame.mixer.Sound("./assets/sounds/flap.mp3")
+        self.played_death = False
+        self.die_channel = pygame.mixer.Channel(1)
+        self.die_channel.set_volume(0.35)
+        self.die_sound = pygame.mixer.Sound("./assets/sounds/die.mp3")
 
     def jump(self):
         self.gravity = -13
@@ -22,6 +29,7 @@ class Bird(pygame.sprite.Sprite):
     def reset(self):
         self.index_image = 0
         self.angle = 0
+        self.played_death = False
         self.image = self.sprites[self.index_image]
         self.rect = self.image.get_rect(center=self.initial_position)
         self.is_active = False
@@ -42,6 +50,9 @@ class Bird(pygame.sprite.Sprite):
         self.image.set_colorkey("Black")
 
     def death(self):
+        if not self.played_death:
+            self.die_channel.play(self.die_sound)
+            self.played_death = True
         self.is_jumping = False
         if self.rect.bottom <= 550:
             self.rect.bottom += 10
@@ -55,13 +66,15 @@ class Bird(pygame.sprite.Sprite):
 
     def controls(self):
         keys = pygame.mouse.get_pressed()
+        space = pygame.key.get_pressed()[pygame.K_SPACE]\
 
         if not self.flappy.is_game_over:
-            if keys[0] and not self.is_jumping:
+            if (keys[0] or space) and not self.is_jumping and not self.flappy.is_loading and self.flappy.is_active:
                 self.is_jumping = True
                 self.jump()
+                self.jump_channel.play(self.jump_sound)
 
-            if not keys[0]:
+            if not keys[0] and not space:
                 self.is_jumping = False
 
     def verify(self):

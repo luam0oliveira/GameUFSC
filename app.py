@@ -11,6 +11,7 @@ class App:
         pygame.init()
         pygame.display.set_caption("Flappy Bird")
         pygame.font.init()
+        pygame.mixer.init()
         self.dimensions = (WIDTH, HEIGHT)
         self.screen = pygame.display.set_mode(self.dimensions)
         self.clock = pygame.time.Clock()
@@ -26,6 +27,7 @@ class App:
                                       self.images["try_again_image"],
                                       self.images["how_to_play"],
                                       self.images["pause_button"])
+
         self.menu = Menu(self, self.images["background_image"], self.images["logo"], self.images["play"])
 
     def load_images(self):

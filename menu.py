@@ -26,5 +26,6 @@ class Menu:
     def start_game(self):
         self.app.state = 1
         self.app.is_loading = True
+        self.app.flappy_bird.is_loading = False
         pygame.time.delay(100)
         self.app.is_loading = False
