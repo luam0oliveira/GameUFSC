@@ -45,7 +45,7 @@ class FlappyBird:
 
     def generate_first_objects(self):
         bottom, top = Obstacle.generate_positions_of_objects()
-        x = 400
+        x = 800
         bottom_obstacle = Obstacle(self.obstacle_images[0], topleft=(x, bottom))
         top_obstacle = Obstacle(self.obstacle_images[1], bottomleft=(x, top))
         self.obstacles.add(bottom_obstacle, top_obstacle)
@@ -56,8 +56,20 @@ class FlappyBird:
 
     def handle_score(self):
         position = self.bird.sprite.rect.x
-        if position == self.obstacles.sprites()[0].rect.x + 1 or (len(self.obstacles) > 2 and position == self.obstacles.sprites()[2].rect.x + 1):
+        obstacles = self.obstacles.sprites()
+        first_obstacle = obstacles[0]
+        second_obstacle = {}
+
+        if len(obstacles) > 6:
+            second_obstacle = obstacles[2]
+
+        if position >= first_obstacle.rect.x and not first_obstacle.scored:
             self.score += 1
+            first_obstacle.scored = True
+        elif second_obstacle and position >= second_obstacle.rect.x and not second_obstacle.scored:
+            self.score += 1
+            second_obstacle.scored = True
+
         self.scoreElement.set_score(self.score)
         self.scoreElement.draw(self.app.screen)
 
@@ -89,7 +101,6 @@ class FlappyBird:
 
     def controls(self):
         keys = pygame.mouse.get_pressed()
-        # print(self.try_again.active)
         if keys[0] and not self.is_game_over and not self.bird.sprite.is_jumping and not self.try_again.is_active:
             self.active_game()
 
@@ -100,7 +111,8 @@ class FlappyBird:
     def update(self):
         self.draw()
         self.handle_score()
-        self.controls()
+        if not self.app.is_loading:
+            self.controls()
         self.ground.draw(self.app.screen)
         self.bird.update()
         self.bird.draw(self.app.screen)
@@ -117,7 +129,7 @@ class FlappyBird:
 class Score:
     def __init__(self):
         self.value = 0
-        self.font = pygame.font.Font(FONTS["bold"], 24)
+        self.font = pygame.font.Font(FONTS["bold"], 30)
 
     def draw(self, screen):
         text = self.font.render(str(self.value), False, "Black")
@@ -162,7 +174,7 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(bottomleft=(0, HEIGHT))
 
     def apply_velocity(self):
-        self.rect.x -= 2
+        self.rect.x -= 3
         if self.rect.x <= -100:
             self.rect.x = 0
 
