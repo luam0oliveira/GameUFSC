@@ -83,10 +83,14 @@ class FlappyBird:
             second_obstacle.scored = True
 
         if added:
+            if self.bird.sprite.rect.bottom <= 0:
+                self.is_game_over = True
+                self.is_active = False
+                self.game_over()
+                return
             self.score += 1
             self.point_channel.play(self.point_sound)
-
-        self.scoreElement.set_score(self.score)
+            self.scoreElement.set_score(self.score)
         self.scoreElement.draw(self.app.screen)
 
     def game_over(self):
@@ -134,12 +138,12 @@ class FlappyBird:
 
     def update(self):
         self.draw()
-        self.handle_score()
         if not self.app.is_loading:
             self.controls()
         self.ground.draw(self.app.screen)
         self.bird.update()
         self.bird.draw(self.app.screen)
+        self.handle_score()
         if not self.is_game_over:
             self.try_again.disable()
             if not self.is_active:

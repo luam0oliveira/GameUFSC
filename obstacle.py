@@ -26,7 +26,7 @@ class Obstacle(pygame.sprite.Sprite):
 
     @staticmethod
     def generate_positions_of_objects():
-        bottom_position = random.randint(170, 500)
+        bottom_position = random.randint(250, 500)
         top_position = bottom_position - DISTANCE_BETWEEN_OBJECTS
         return bottom_position, top_position
 

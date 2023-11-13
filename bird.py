@@ -22,6 +22,9 @@ class Bird(pygame.sprite.Sprite):
         self.die_channel = pygame.mixer.Channel(1)
         self.die_channel.set_volume(0.35)
         self.die_sound = pygame.mixer.Sound("./assets/sounds/die.mp3")
+        self.hit_channel = pygame.mixer.Channel(3)
+        self.die_channel.set_volume(0.2)
+        self.hit_sound = pygame.mixer.Sound("./assets/sounds/hit.mp3")
 
     def jump(self):
         self.gravity = -13
@@ -51,6 +54,8 @@ class Bird(pygame.sprite.Sprite):
 
     def death(self):
         if not self.played_death:
+            self.hit_channel.play(self.hit_sound)
+            pygame.time.delay(100)
             self.die_channel.play(self.die_sound)
             self.played_death = True
         self.is_jumping = False
