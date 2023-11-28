@@ -16,7 +16,8 @@ class FlappyBird:
                  bird_sprites,
                  try_again_image,
                  how_to_play_image,
-                 pause_image):
+                 pause_image,
+                 boardscore_image):
         self.app = app
         self.score = 0
         self.scoreElement = Score()
@@ -36,7 +37,7 @@ class FlappyBird:
                            int(self.app.dimensions[1]) / 2,
                            bird_sprites))
         self.generate_first_objects()
-        self.try_again = TryAgain(try_again_image, self.restart)
+        self.try_again = TryAgain(try_again_image,boardscore_image, self.restart)
         self.menu_button = MenuButton(pause_image, self.click_menu_button)
         self.point_channel = pygame.mixer.Channel(2)
         self.point_sound = pygame.mixer.Sound("./assets/sounds/point.mp3")
@@ -158,7 +159,6 @@ class FlappyBird:
             self.game_over()
         self.add_obstacles()
 
-
 class Score:
     def __init__(self):
         self.value = 0
@@ -176,7 +176,7 @@ class Score:
 
 
 class TryAgain:
-    def __init__(self, image, fn):
+    def __init__(self, image, score_board_image, fn):
         super().__init__()
         self.image = image
         self.image.set_colorkey("Black")

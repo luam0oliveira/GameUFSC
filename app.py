@@ -29,7 +29,9 @@ class App:
                                       self.images["bird_sprites"],
                                       self.images["try_again_image"],
                                       self.images["how_to_play"],
-                                      self.images["pause_button"])
+                                      self.images["pause_button"],
+                                      self.images["board_score_image"]
+                                      )
 
         self.menu = Menu(self,
                          self.images["background_image"],
@@ -38,7 +40,7 @@ class App:
                          self.skins,
                          self.images["next"],
                          self.images["previous"],
-                         self.change_skin)
+                         self.change_skin,)
 
     def load_skins(self):
         data = SKINS
@@ -77,6 +79,10 @@ class App:
         self.images["background_image"] = pygame.transform.scale(ss.image_at((0, 0, 143, 255)), DIMENSIONS)
         self.images["ground_image"] = pygame.transform.scale(ss.image_at((292, 0, 67, 56)),
                                                              (self.dimensions[0] + 150, 150))
+
+        # Load board_score image
+        self.images["board_score_image"] = pygame.transform.scale_by(ss.image_at((3, 259, 113, 57)), 2.75)
+        self.images["board_score_image"].set_colorkey("Black")
 
         # Load try again image
         self.images["try_again_image"] = pygame.transform.scale_by(ss.image_at((354, 118, 52, 29)), 2)

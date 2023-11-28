@@ -51,7 +51,8 @@ class Bird(pygame.sprite.Sprite):
         self.rect.bottom += self.gravity
 
     def animation(self):
-        self.index_image = (self.index_image + 1) % self.num_sprites
+        if pygame.time.get_ticks() % 5 == 0:
+            self.index_image = (self.index_image + 1) % self.num_sprites
         self.angle = -self.gravity
         self.image = pygame.transform.rotate((self.sprites[self.index_image]), self.angle)
         self.image.set_colorkey("Black")

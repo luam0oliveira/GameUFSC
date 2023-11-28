@@ -19,7 +19,7 @@ class Menu:
         self.play_button_surf = play_button_image
         self.skin_changer = SkinChanger(app, self.skins, next_image, previous_image, skin_changer_fn)
         self.play_button_rect = self.play_button_surf.get_rect(
-            center=(int(WIDTH / 2) + 1, int(HEIGHT / 2 + 100)))
+            center=(int(WIDTH / 2) + 1, int(HEIGHT / 2 + 200)))
 
     def draw(self):
         self.app.screen.blit(self.background, self.background.get_rect(topleft=(0, 0)))
