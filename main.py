@@ -1,7 +1,25 @@
-from app import App
+import sys
+import pygame
+from settings import DIMENSIONS
+from menu import Menu
+from game import Game
 
-app = App()
-app.run()
+pygame.init()
+screen = pygame.display.set_mode(DIMENSIONS)
+states = {
+    "MENU": Menu()
+}
+
+game = Game(screen, states, "MENU")
+game.run()
+
+pygame.quit()
+sys.exit()
+
+# from app import App
+#
+# app = App()
+# app.run()
 
 # fb = FlappyBird(0, obstacle_images, background_image, ground_surf, bird_sprites)
 

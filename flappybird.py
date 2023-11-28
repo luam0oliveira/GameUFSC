@@ -101,6 +101,7 @@ class FlappyBird:
     def game_over(self):
         if self.is_game_over:
             self.bird.sprite.verify()
+
             self.try_again.update()
             self.try_again.draw(self.app.screen)
 
