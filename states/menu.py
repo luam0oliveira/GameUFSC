@@ -24,7 +24,7 @@ class Menu(BaseState):
         self.skins = {}
         self.load_images()
         self.load_rect()
-        self.font = pygame.font.Font("./assets/fonts/PixeloidSansBold.ttf", 18)
+        self.font = pygame.font.Font("assets/fonts/PixeloidSansBold.ttf", 18)
         self.skin_name = self.font.render(
             self.skins[list(self.skins.keys())[self.selected_index]]["name"], True, "White")
         self.skin_name_rect = self.skin_name.get_rect(
@@ -33,7 +33,7 @@ class Menu(BaseState):
         self.persist["best_score"] = get_best_score()
 
     def load_images(self):
-        ss = spritesheet.SpriteSheet("assets/sprites/sprites.png")
+        ss = spritesheet.SpriteSheet("./assets/sprites/sprites.png")
         self.background = pygame.transform.scale(ss.image_at((0, 0, 143, 255)), self.screen_rect.size)
         self.logo = pygame.transform.scale_by(ss.image_at((351, 91, 89, 24)), 3)
         self.logo.set_colorkey("Black")

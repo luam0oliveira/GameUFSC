@@ -89,7 +89,7 @@ class Gameplay(BaseState):
             self.obstacles.add(bottom_obstacle, top_obstacle)
 
     def load_images(self):
-        ss = spritesheet.SpriteSheet("assets/sprites/sprites.png")
+        ss = spritesheet.SpriteSheet("./assets/sprites/sprites.png")
         self.background = pygame.transform.scale(ss.image_at((0, 0, 143, 255)), self.screen_rect.size)
         self.ground_image = pygame.transform.scale(ss.image_at((292, 0, 67, 56)), (self.screen_rect.size[0] + 150, 150))
         self.obstacle_images = [
