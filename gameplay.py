@@ -14,6 +14,7 @@ class Gameplay(BaseState):
         self.ground_image = None
         self.obstacle_images = None
         self.pause_button = None
+        self.how_to_play = None
         self.load_images()
         self.pause_button_rect = self.pause_button.get_rect(topleft=(20, 20))
         self.ground = pygame.sprite.GroupSingle(Ground(self.ground_image))
@@ -26,6 +27,11 @@ class Gameplay(BaseState):
         self.is_game_over = False
         self.point_channel = pygame.mixer.Channel(2)
         self.point_sound = pygame.mixer.Sound("./assets/sounds/point.mp3")
+        self.next_state = "GAMEOVER"
+
+    def startup(self, persistent):
+        self.persist = persistent
+        self.restart()
 
     def generate_first_objects(self):
         bottom, top = Obstacle.generate_positions_of_objects()
@@ -33,8 +39,6 @@ class Gameplay(BaseState):
         bottom_obstacle = Obstacle(self.obstacle_images[0], topleft=(x, bottom))
         top_obstacle = Obstacle(self.obstacle_images[1], bottomleft=(x, top))
         self.obstacles.add(bottom_obstacle, top_obstacle)
-
-    # def handle_state(self):
 
     def is_game_over_checker(self):
         self.is_game_over = bool(len(pygame.sprite.spritecollide(self.bird.sprite, self.obstacles, False)) >= 1 or
@@ -96,6 +100,8 @@ class Gameplay(BaseState):
             image.set_colorkey("Black")
         self.pause_button = pygame.transform.scale_by(ss.image_at((462, 26, 40, 14)), 2.5)
         self.pause_button.set_colorkey("Black")
+        self.how_to_play = pygame.transform.scale_by(ss.image_at((292, 91, 57, 49)), 2.5)
+        self.how_to_play.set_colorkey("Black")
 
     def restart(self):
         self.is_active = False
@@ -123,6 +129,9 @@ class Gameplay(BaseState):
         surface.blit(self.pause_button, self.pause_button_rect)
         self.bird.draw(surface)
         self.scoreElement.draw(surface)
+        if not self.is_active and not self.is_game_over:
+            surface.blit(self.how_to_play, self.how_to_play.get_rect(
+                center=(self.screen_rect.centerx, self.screen_rect.centery + 100)))
 
     def update(self, dt):
         if not self.bird:
@@ -133,6 +142,10 @@ class Gameplay(BaseState):
         if self.is_game_over:
             self.bird.sprite.death()
             self.bird.update()
+            if self.bird.sprite.rect.bottom >= 551:
+                self.next_state = "GAMEOVER"
+                self.persist["score"] = self.score
+                self.done = True
         if self.is_active:
             self.bird.update()
             self.ground.update()
