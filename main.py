@@ -3,11 +3,14 @@ import pygame
 from settings import DIMENSIONS
 from menu import Menu
 from game import Game
+from gameplay import Gameplay
 
 pygame.init()
 screen = pygame.display.set_mode(DIMENSIONS)
+
 states = {
-    "MENU": Menu()
+    "MENU": Menu(),
+    "GAMEPLAY": Gameplay()
 }
 
 game = Game(screen, states, "MENU")

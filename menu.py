@@ -55,6 +55,9 @@ class Menu(BaseState):
 
     def update(self, dt):
         self.selected_skin = self.skins[list(self.skins.keys())[self.selected_index]]["sprites"][1]
+        self.persist = {
+            "skin": self.skins[list(self.skins.keys())[self.selected_index]]["sprites"]
+        }
 
     def get_event(self, event):
         if event.type == pygame.MOUSEBUTTONUP:

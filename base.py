@@ -16,8 +16,8 @@ class BaseState(object):
     def get_event(self, event):
         pass
 
-    def update(self, event):
+    def update(self, dt):
         pass
 
-    def draw(self, event):
+    def draw(self, surface):
         pass

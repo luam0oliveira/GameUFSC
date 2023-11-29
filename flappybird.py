@@ -37,10 +37,9 @@ class FlappyBird:
                            int(self.app.dimensions[1]) / 2,
                            bird_sprites))
         self.generate_first_objects()
-        self.try_again = TryAgain(try_again_image,boardscore_image, self.restart)
+        self.try_again = TryAgain(try_again_image, boardscore_image, self.restart)
         self.menu_button = MenuButton(pause_image, self.click_menu_button)
-        self.point_channel = pygame.mixer.Channel(2)
-        self.point_sound = pygame.mixer.Sound("./assets/sounds/point.mp3")
+
 
     def click_menu_button(self):
         self.restart()
@@ -112,9 +111,6 @@ class FlappyBird:
         self.obstacles.empty()
         self.generate_first_objects()
         self.score = 0
-        self.try_again.disable()
-        pygame.time.delay(90)
-        self.is_loading = False
 
     def move_objects(self):
         for obstacle in self.obstacles:
