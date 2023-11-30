@@ -37,6 +37,8 @@ class GameOver(BaseState):
         self.best_score = self.persist["best_score"]
         self.alpha = 0
         self.score_surf = self.font.render(str(self.score), False, "White")
+        self.score_rect = self.score_surf.get_rect(
+            topright=(self.scoreboard_rect.topright[0] - 30, self.scoreboard_rect.topright[1] + 45))
         if self.score > self.best_score:
             save_score(self.score)
             self.persist["best_score"] = self.score
