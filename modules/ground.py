@@ -1,5 +1,5 @@
 import pygame
-from settings import HEIGHT
+from modules.settings import HEIGHT
 
 
 class Ground(pygame.sprite.Sprite):

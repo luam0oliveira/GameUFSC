@@ -1,6 +1,6 @@
 import pygame
 import random
-from settings import DISTANCE_BETWEEN_OBJECTS, DISTANCE_BETWEEN_PAIR_OBJECTS
+from modules.settings import DISTANCE_BETWEEN_OBJECTS, DISTANCE_BETWEEN_PAIR_OBJECTS
 
 
 class Obstacle(pygame.sprite.Sprite):

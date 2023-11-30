@@ -1,8 +1,5 @@
 import pygame
-import spritesheet
-from base import BaseState
-from font_util import outline
-from save_game import save_score
+from modules import BaseState, outline, save_score, SpriteSheet
 
 
 class GameOver(BaseState):
@@ -67,7 +64,7 @@ class GameOver(BaseState):
                 self.done = True
 
     def load_images(self):
-        ss = spritesheet.SpriteSheet("./assets/sprites/sprites.png")
+        ss = SpriteSheet("./assets/sprites/sprites.png")
         self.scoreboard = pygame.transform.scale_by(ss.image_at((3, 259, 113, 57)), 2.9)
         self.scoreboard.set_colorkey("Black")
         self.play_again = pygame.transform.scale_by(ss.image_at((354, 118, 52, 29)), 2.5)

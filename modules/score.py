@@ -1,6 +1,6 @@
 import pygame
-from settings import FONTS, WIDTH
-from font_util import outline
+from modules.settings import FONTS, WIDTH
+from modules.font_util import outline
 
 
 class Score:

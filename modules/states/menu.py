@@ -1,10 +1,6 @@
 import pygame.mouse
-import spritesheet
-from base import BaseState
-from settings import SKINS
-from spritesheet_skins import get_skins
-from save_game import get_best_score
-from font_util import outline
+from modules import BaseState, SKINS, get_best_score, outline, get_skins, SpriteSheet
+
 
 
 class Menu(BaseState):
@@ -33,7 +29,7 @@ class Menu(BaseState):
         self.persist["best_score"] = get_best_score()
 
     def load_images(self):
-        ss = spritesheet.SpriteSheet("./assets/sprites/sprites.png")
+        ss = SpriteSheet("./assets/sprites/sprites.png")
         self.background = pygame.transform.scale(ss.image_at((0, 0, 143, 255)), self.screen_rect.size)
         self.logo = pygame.transform.scale_by(ss.image_at((351, 91, 89, 24)), 3)
         self.logo.set_colorkey("Black")

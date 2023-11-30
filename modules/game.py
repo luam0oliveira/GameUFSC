@@ -1,5 +1,5 @@
 import pygame
-from settings import FPS
+from modules.settings import FPS
 
 
 class Game(object):
